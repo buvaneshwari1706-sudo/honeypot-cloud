@@ -39,10 +39,7 @@ app.post("/login", (req, res) => {
 
   res.redirect("/dashboard");
 });
-//Home route
-app.get("/",(req,res)=>{
-  res.send("<h1>Honeypot Server Running</h1>")
-});
+
 // 📊 Dashboard
 app.get("/dashboard", (req, res) => {
   res.send("<h2>Camera Live Feed</h2><p>Status: Online</p>");
