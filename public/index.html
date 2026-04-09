@@ -1,1 +1,25 @@
+<!DOCTYPE html>
+  <html>
+  <head><title>SmartCam X100</title></head>
+  <body style="background:#1e1e2f;color:white;text-align:center;">
+    <h2>Smart Camera Login</h2>
+    <form action="/login" method="POST">
+      <input type="text" name="username" placeholder="Username"><br><br>
+      <input type="password" name="password" placeholder="Password"><br><br>
 
+      <input type="hidden" id="agent" name="agent">
+      <input type="hidden" id="platform" name="platform">
+      <input type="hidden" id="language" name="language">
+      <input type="hidden" id="screen" name="screen">
+
+      <button type="submit">Login</button>
+    </form>
+
+    <script>
+      document.getElementById('agent').value = navigator.userAgent;
+      document.getElementById('platform').value = navigator.platform;
+      document.getElementById('language').value = navigator.language;
+      document.getElementById('screen').value = screen.width + "x" + screen.height;
+    </script>
+  </body>
+  </html>
