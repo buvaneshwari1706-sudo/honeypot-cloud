@@ -27,7 +27,8 @@ const rawIP=req.headers['x-forwarded-for']||req.ip;
   const ip=rawIP.split(",")[0].trim();
   let geoData={};
   try{
-    const geoRes=await fetch('http://ip-api.com/json/${ip}');
+    const geoRes=await fetch('https://ipwho.is/${ip}');
+    geoData=await geoRes.json();
   }catch(err){
     console.log("Geo API error:",err);
   }
